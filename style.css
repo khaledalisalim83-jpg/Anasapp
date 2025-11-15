@@ -1,0 +1,65 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #e5ddd5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.chat-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  padding: 18px;
+  width: 360px;
+  max-width: 95%;
+}
+
+.chat-container h2 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  flex: 1 1 auto;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #25d366;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button#logoutBtn {
+  background: #f44336;
+}
+
+#status {
+  margin-top: 12px;
+  min-height: 20px;
+  font-size: 14px;
+  color: #333;
+}

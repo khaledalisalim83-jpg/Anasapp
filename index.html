@@ -1,0 +1,132 @@
+<!-- ===========================
+  كامل: واجهة تسجيل + تهيئة Firebase + وظائف Auth
+  الصق هذا كله في تبويب HTML في CodePen
+  (امسح أي كود في تبويب JS قبل ما تلصق)
+=========================== -->
+
+<div style="display:flex;justify-content:center;margin-top:30px;">
+  <div style="width:360px;background:#fff;border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.12);">
+    <h2 style="margin:0 0 12px 0;font-size:20px">تسجيل دخول / إنشاء حساب</h2>
+
+    <input id="email" type="email" placeholder="البريد الإلكتروني" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ddd;">
+    <input id="password" type="password" placeholder="كلمة المرور" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ddd;">
+
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button id="signupBtn" style="flex:1;padding:10px;border-radius:8px;border:none;background:#25d366;color:#fff;cursor:pointer;">إنشاء حساب</button>
+      <button id="loginBtn" style="flex:1;padding:10px;border-radius:8px;border:none;background:#128c7e;color:#fff;cursor:pointer;">تسجيل دخول</button>
+      <button id="logoutBtn" style="flex:1;padding:10px;border-radius:8px;border:none;background:#f44336;color:#fff;cursor:pointer;">خروج</button>
+    </div>
+
+    <p id="status" style="margin-top:12px;min-height:20px;color:#333"></p>
+  </div>
+</div>
+
+<!-- مكتبات Firebase (v8.x) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+/* ======= ضع هذا الكود كما هو =======
+   (لقد استخدمت القيم التي أرسلتها مسبقاً)
+   إذا أردت استخدام قيم أخرى استبدلها هنا.
+*/
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4BsQEHa9EzIwVIt0bcyKbNFpCm_zTlIc",
+  authDomain: "abuanaschatapp.firebaseapp.com",
+  projectId: "abuanaschatapp",
+  storageBucket: "abuanaschatapp.firebasestorage.app",
+  messagingSenderId: "380767610591",
+  appId: "1:380767610591:web:854f80735a4d4788206b6a",
+  measurementId: "G-FPZ3JC4ZMC"
+};
+
+// تهيئة Firebase
+firebase.initializeApp(firebaseConfig);
+
+// خدمات Firebase
+const auth = firebase.auth();
+const db = firebase.firestore(); // جاهز لو احتجنا قواعد بيانات لاحقاً
+
+// عناصر الصفحة
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("password");
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const statusP = document.getElementById("status");
+
+// دوال مساعدة
+function setStatus(text, isError = false) {
+  statusP.innerText = text;
+  statusP.style.color = isError ? "#c62828" : "#2e7d32";
+}
+
+// إنشاء حساب
+function signup() {
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+  if (!email || !password) return setStatus("أدخل البريد وكلمة المرور أولاً", true);
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      setStatus("✅ تم إنشاء الحساب بنجاح");
+    })
+    .catch(error => {
+      setStatus("خطأ: " + error.message, true);
+      console.error("signup error:", error);
+    });
+}
+
+// تسجيل دخول
+function login() {
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+  if (!email || !password) return setStatus("أدخل البريد وكلمة المرور أولاً", true);
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(() => {
+      setStatus("✅ تم تسجيل الدخول بنجاح");
+    })
+    .catch(error => {
+      setStatus("خطأ: " + error.message, true);
+      console.error("login error:", error);
+    });
+}
+
+// تسجيل خروج
+function logout() {
+  auth.signOut()
+    .then(() => {
+      setStatus("🚪 تم تسجيل الخروج");
+    })
+    .catch(error => {
+      setStatus("خطأ: " + error.message, true);
+      console.error("logout error:", error);
+    });
+}
+
+// ربط الأزرار
+signupBtn.addEventListener("click", signup);
+loginBtn.addEventListener("click", login);
+logoutBtn.addEventListener("click", logout);
+
+// متابعة حالة المستخدم (اختياري)
+auth.onAuthStateChanged(user => {
+  if (user) {
+    setStatus("مسجل دخول: " + (user.email || user.uid));
+  } else {
+    setStatus("غير مسجل دخول حالياً");
+  }
+});
+</script><!-- واجهة الدردشة -->
+<div id="chatSection" style="display:none; margin-top:20px;">
+  <h3>💬 غرفة الدردشة</h3>
+  <div id="messages" style="border:1px solid #ccc; padding:10px; height:200px; overflow-y:auto; background:#f9f9f9;">
+  </div>
+  <input type="text" id="messageInput" placeholder="اكتب رسالة..." style="width:70%; padding:5px;">
+  <button id="sendBtn" style="background:#4CAF50; color:white; padding:6px 10px; border:none; border-radius:4px;">
+    إرسال
+  </button>
+</div>
